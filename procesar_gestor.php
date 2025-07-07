@@ -1,4 +1,7 @@
 <?php
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
 session_start();
 include 'setup/conexion.php';
 
@@ -18,13 +21,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Validar formato de correo
     if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
-        echo json_encode(['status' => 'error', 'message' => 'Formato de correo electrónico inválido']);
+        echo json_encode(['success' => false, 'message' => 'Formato de correo electrónico inválido']);
         exit;
     }
 
     // Validar RUT
     if (!validarRut($rut)) {
-        echo json_encode(['status' => 'error', 'message' => 'RUT inválido']);
+        echo json_encode(['success' => false, 'message' => 'RUT inválido']);
         exit;
     }
 
@@ -34,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bind_param("s", $rut);
     $stmt->execute();
     if ($stmt->get_result()->num_rows > 0) {
-        echo json_encode(['status' => 'error', 'message' => 'El RUT ya está registrado']);
+        echo json_encode(['success' => false, 'message' => 'El RUT ya está registrado']);
         exit;
     }
 
@@ -44,7 +47,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bind_param("s", $correo);
     $stmt->execute();
     if ($stmt->get_result()->num_rows > 0) {
-        echo json_encode(['status' => 'error', 'message' => 'El correo electrónico ya está registrado']);
+        echo json_encode(['success' => false, 'message' => 'El correo electrónico ya está registrado']);
         exit;
     }
 
@@ -70,8 +73,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-    // Hash de la contraseña usando bcrypt
-    $password_hash = password_hash($password, PASSWORD_BCRYPT);
+    // Guardar la contraseña en texto plano (solo para pruebas, NO recomendado en producción)
+    $password_hash = $password;
+    error_log("[REGISTRO] Password plano: $password");
+    error_log("[REGISTRO] Hash generado: $password_hash");
 
     // Insertar en la base de datos
     $sql = "INSERT INTO gestores (rut, nombre_completo, fecha_nacimiento, correo, password, sexo, telefono, certificado_path, estado) 
@@ -87,15 +92,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['nombre'] = $nombre_completo;
             $_SESSION['tipo'] = 'gestor';
             
-            echo json_encode(['status' => 'success', 'message' => 'Registro exitoso']);
+            echo json_encode(['success' => true, 'message' => 'Registro exitoso']);
         } else {
-            echo json_encode(['status' => 'error', 'message' => 'Error al registrar: ' . $stmt->error]);
+            echo json_encode(['success' => false, 'message' => 'Error al registrar: ' . $stmt->error]);
         }
     } catch (Exception $e) {
-        echo json_encode(['status' => 'error', 'message' => 'Error en el registro: ' . $e->getMessage()]);
+        echo json_encode(['success' => false, 'message' => 'Error en el registro: ' . $e->getMessage()]);
     }
 } else {
-    echo json_encode(['status' => 'error', 'message' => 'Método no permitido']);
+    echo json_encode(['success' => false, 'message' => 'Método no permitido']);
 }
 
 // Función para validar RUT chileno
@@ -115,4 +120,4 @@ function validarRut($rut) {
     if($dvr == 10) $dvr = 'K';
     return $dvr == strtoupper($dv);
 }
-?> 
+?>

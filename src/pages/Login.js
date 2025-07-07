@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { authAPI } from '../services/api';
 import Swal from 'sweetalert2';
+import { Link } from 'react-router-dom';
 
 const Login = () => {
   const { login } = useAuth();
@@ -125,7 +126,7 @@ const Login = () => {
       
       <br />
       <div>
-        <a href="/recuperar" className="recuperar">Recuperar Contraseña</a>
+        <Link to="/recuperar" className="recuperar">Recuperar Contraseña</Link>
       </div>
     </div>
   );

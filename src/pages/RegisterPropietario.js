@@ -33,7 +33,7 @@ const RegisterPropietario = () => {
     const tmp = rut.split('-');
     const digv = tmp[1].toLowerCase();
     const rutNum = tmp[0];
-    return (dv(rutNum) == digv);
+    return String(dv(rutNum)).toLowerCase() === digv;
   };
 
   const dv = (T) => {
@@ -281,4 +281,4 @@ const RegisterPropietario = () => {
   );
 };
 
-export default RegisterPropietario; 
+export default RegisterPropietario;

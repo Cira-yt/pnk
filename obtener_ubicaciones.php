@@ -1,6 +1,9 @@
 <?php
 ob_clean();
 header('Content-Type: application/json');
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
 include("setup/conexion.php");
 $conexion = conectar();
 
@@ -90,4 +93,4 @@ try {
 
 echo json_encode($response);
 exit;
-// No cerrar con ?> para evitar espacios en blanco 
+// No cerrar con ?> para evitar espacios en blanco

@@ -6,6 +6,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import RegisterPropietario from './pages/RegisterPropietario';
 import RegisterGestor from './pages/RegisterGestor';
+import Recuperar from './pages/Recuperar';
 import { AuthProvider } from './context/AuthContext';
 import './App.css';
 
@@ -21,6 +22,7 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/registro-propietario" element={<RegisterPropietario />} />
               <Route path="/registro-gestor" element={<RegisterGestor />} />
+              <Route path="/recuperar" element={<Recuperar />} />
             </Routes>
           </main>
           <Footer />
@@ -30,4 +32,4 @@ function App() {
   );
 }
 
-export default App; 
+export default App;

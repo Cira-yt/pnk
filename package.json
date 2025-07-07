@@ -18,11 +18,11 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
+  "start": "react-scripts start",
+  "dev": "react-scripts start",
+  "build": "react-scripts build",
+  "test": "react-scripts test"
+},
   "eslintConfig": {
     "extends": [
       "react-app",
@@ -41,5 +41,5 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://localhost:80"
+  "proxy": "http://localhost:3000"
 } 

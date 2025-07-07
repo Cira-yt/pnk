@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { propertiesAPI } from '../services/api';
 import Login from './Login';
@@ -23,16 +23,14 @@ const Home = () => {
     loadProperties();
   }, []);
 
-  useEffect(() => {
-    applyFilters();
-  }, [properties, filters]);
-
   const loadProperties = async () => {
     try {
       setLoading(true);
       const data = await propertiesAPI.getAll();
-      setProperties(data);
-      setFilteredProperties(data);
+      // Asegurarse de que siempre sea un array
+      const safeData = Array.isArray(data) ? data : [];
+      setProperties(safeData);
+      setFilteredProperties(safeData);
     } catch (error) {
       console.error('Error cargando propiedades:', error);
       Swal.fire({
@@ -45,7 +43,7 @@ const Home = () => {
     }
   };
 
-  const applyFilters = () => {
+  const applyFilters = useCallback(() => {
     let filtered = [...properties];
 
     if (filters.tipo_propiedad) {
@@ -65,7 +63,11 @@ const Home = () => {
     }
 
     setFilteredProperties(filtered);
-  };
+  }, [properties, filters]);
+
+  useEffect(() => {
+    applyFilters();
+  }, [properties, filters, applyFilters]);
 
   const handleFilterChange = (filterName, value) => {
     setFilters(prev => ({
@@ -103,7 +105,7 @@ const Home = () => {
       </div>
 
       <div className="galeria">
-        {filteredProperties.length > 0 ? (
+        {Array.isArray(filteredProperties) && filteredProperties.length > 0 ? (
           filteredProperties.map((property) => (
             <PropertyCard 
               key={property.num_propiedad}
@@ -122,4 +124,4 @@ const Home = () => {
   );
 };
 
-export default Home; 
+export default Home;

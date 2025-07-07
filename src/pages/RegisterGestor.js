@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authAPI } from '../services/api';
-import Swal from 'sweetalert2';
 
 const RegisterGestor = () => {
   const navigate = useNavigate();
@@ -34,14 +33,15 @@ const RegisterGestor = () => {
     const tmp = rut.split('-');
     const digv = tmp[1].toLowerCase();
     const rutNum = tmp[0];
-    return (dv(rutNum) == digv);
+    return String(dv(rutNum)).toLowerCase() === digv;
   };
 
   const dv = (T) => {
     let M = 0, S = 1;
     for (; T; T = Math.floor(T/10))
       S = (S + T % 10 * (9 - M++ % 6)) % 11;
-    return S ? S - 1 : 'k';
+    const res = S ? S - 1 : 'k';
+    return String(res);
   };
 
   // Función para validar contraseña
@@ -137,29 +137,19 @@ const RegisterGestor = () => {
 
     try {
       const response = await authAPI.registerGestor(formData);
-      
       if (response.success) {
-        Swal.fire({
-          icon: 'success',
-          title: '¡Registro exitoso!',
-          text: 'Tu cuenta de gestor ha sido creada correctamente'
-        }).then(() => {
-          navigate('/');
-        });
+        alert('¡Registro exitoso! Tu cuenta de gestor ha sido creada correctamente');
+        navigate('/');
       } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error en el registro',
-          text: response.message || 'Hubo un error al registrar el usuario'
-        });
+        alert('Error en el registro: ' + (response.message || 'Hubo un error al registrar el usuario'));
       }
     } catch (error) {
       console.error('Error en registro:', error);
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Error al conectar con el servidor'
-      });
+      if (error.response && error.response.data && error.response.data.error) {
+        alert('Error: ' + error.response.data.error);
+      } else {
+        alert('Error: ' + (error.message || 'Error al conectar con el servidor'));
+      }
     }
   };
 
@@ -318,4 +308,4 @@ const RegisterGestor = () => {
   );
 };
 
-export default RegisterGestor; 
+export default RegisterGestor;

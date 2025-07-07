@@ -1,4 +1,8 @@
 <?php
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+
 include("setup/conexion.php");
 
 $tipo = isset($_POST['tipo']) ? intval($_POST['tipo']) : 0;
@@ -8,6 +12,10 @@ $comuna = isset($_POST['comuna']) ? intval($_POST['comuna']) : 0;
 $sector = isset($_POST['sector']) ? intval($_POST['sector']) : 0;
 
 $con = conectar();
+if (!$con) {
+    http_response_code(500);
+    die(json_encode(["error" => "Error de conexión a la base de datos: " . mysqli_connect_error()]));
+}
 
 // Construir la consulta dinámica
 $sql = "SELECT p.num_propiedad, p.estado, p.titulopropiedad AS titulo, p.precio_pesos, p.precio_uf, g.foto
@@ -36,6 +44,10 @@ if ($sector) {
 }
 
 $result = mysqli_query($con, $sql);
+if (!$result) {
+    http_response_code(500);
+    die(json_encode(["error" => "Error en la consulta SQL: " . mysqli_error($con)]));
+}
 
 if (mysqli_num_rows($result) > 0) {
     while($datos = mysqli_fetch_array($result)) {
@@ -53,4 +65,4 @@ if (mysqli_num_rows($result) > 0) {
     }
 } else {
     echo '<div class="alert alert-warning">No se encontraron propiedades con los filtros seleccionados.</div>';
-} 
+}
